@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -19,43 +19,123 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 16, right: 16), // ✅ Left & Right Padding (no top/bottom)
-      child: Column(
+    double screenWidth = MediaQuery.of(context).size.width;
+
+    return Scaffold(
+      body: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween, // ✅ Space between text and icon
-            children: [
-              // Title Text
-              RichText(
-                text: TextSpan(
-                  text: 'Find Your\nFavourite Destination',
-                  style: TextStyle(
-                    fontSize: 30,
-                    color: const Color(0xff543319), // ✅ Fixed color syntax
+          SizedBox(height: 28),
+          Padding(
+            padding: EdgeInsetsGeometry.only(left: 16, right: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // layout widget
+              children: [
+                // takes up children since it takes up multiple items
+                RichText(
+                  text: TextSpan(
+                    text: 'Find your\nfavorite place ',
+                    style: TextStyle(fontSize: 32, color: Colors.black),
                   ),
                 ),
-              ),
 
-              // Notification Icon Button
-              IconButton(
-                onPressed: () {
-                  // Add action later (e.g., show notifications)
-                },
-                icon: SvgPicture.asset(
-                  'assets/icons/bell.svg',
-                  width: 24,
-                  height: 24,
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color.fromARGB(255, 228, 228, 228),
+                  ),
+                  child: IconButton(
+                    padding: EdgeInsets.all(24),
+                    onPressed: () {},
+                    icon: SvgPicture.asset(
+                      "assets/icons/bell.svg",
+                      color: Colors.black,
+                    ),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-
-          // ✅ Optional: Add vertical space below the row
-          const SizedBox(height: 16),
-
-          // Placeholder for other content
-          // Example: Text('More content goes here...'),
+          // second part of the column: search section
+          Padding(
+            padding: EdgeInsetsGeometry.only(left: 16, right: 16),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: screenWidth * 2 / 3,
+                  child: SearchAnchor(
+                    builder: (
+                      BuildContext context,
+                      SearchController controller,
+                    ) {
+                      return SearchBar(
+                        controller: controller,
+                        padding: const WidgetStatePropertyAll<EdgeInsets>(
+                          EdgeInsets.symmetric(horizontal: 16.0),
+                        ),
+                        onTap: () {
+                          controller.openView();
+                        },
+                        onChanged: (_) {
+                          controller.openView();
+                        },
+                        leading: const Icon(Icons.search),
+                        trailing: <Widget>[
+                          Tooltip(
+                            message: 'Change brightness mode',
+                            child: IconButton(
+                              // isSelected: isDark,
+                              onPressed: () {
+                                setState(() {
+                                  // isDark = !isDark;
+                                });
+                              },
+                              icon: const Icon(Icons.wb_sunny_outlined),
+                              selectedIcon: const Icon(
+                                Icons.brightness_2_outlined,
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                    suggestionsBuilder: (
+                      BuildContext context,
+                      SearchController controller,
+                    ) {
+                      return List<ListTile>.generate(5, (int index) {
+                        final String item = 'item $index';
+                        return ListTile(
+                          title: Text(item),
+                          onTap: () {
+                            setState(() {
+                              controller.closeView(item);
+                            });
+                          },
+                        );
+                      });
+                    },
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color.fromARGB(255, 228, 228, 228),
+                  ),
+                  child: IconButton(
+                    padding: EdgeInsets.all(24),
+                    onPressed: () {},
+                    icon: SvgPicture.asset(
+                      "assets/icons/filter_icon.svg",
+                      width: 28,
+                      height: 28,
+                      color: Color(0xff7f7e7e),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
